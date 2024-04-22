@@ -14,57 +14,135 @@ import jakarta.jms.Message;
 import jakarta.jms.MessageListener;
 import jakarta.jms.ObjectMessage;
 
+/**
+ * The {@code ElectionHandler} class represents a handler for the election
+ * process in the distributed system. It sends and receives election messages,
+ * waits for responses, and coordinates the nodes in the system. The master node
+ * is elected based on Ring Algorithm.
+ * 
+ * @author Vincenzo Barbato 345728
+ */
 public class ElectionHandler implements Handler, MessageListener {
 
+	/**
+	 * The process ID of the node.
+	 */
 	private Integer pid = null;
 
+	/**
+	 * Sets the process ID of the node.
+	 * 
+	 * @param pid the process ID of the node
+	 */
 	public void setPid(Integer pid) {
 		this.pid = pid;
 	}
 
+	/**
+	 * The master node flag.
+	 */
 	private Boolean master = null;
 
+	/**
+	 * Returns the master node flag.
+	 * 
+	 * @return the master node flag
+	 */
 	public Boolean getMaster() {
 		return this.master;
 	}
 
+	/**
+	 * The process ID of the master node.
+	 */
 	private Integer pidMaster = null;
 
+	/**
+	 * Returns the process ID of the master node.
+	 * 
+	 * @return the process ID of the master node
+	 */
 	public Integer getPidMaster() {
 		return this.pidMaster;
 	}
 
+	/**
+	 * The list of process IDs of the nodes in the system.
+	 */
 	private ArrayList<Integer> pids;
 
+	/**
+	 * Sets the list of process IDs of the nodes in the system.
+	 * 
+	 * @param pids the list of process IDs of the nodes in the system
+	 */
 	public void setPids(ArrayList<Integer> pids) {
 		Collections.sort(pids);
 		this.pids = new ArrayList<Integer>(pids);
 	}
 
-	private static final int responseTimeout = 500;
-	boolean responseReceived;
-
-	private MessageHandlerImpl messageHandler = null;
-
+	/**
+	 * The down flag.
+	 */
 	private boolean down = false;
 
+	/**
+	 * Sets the down flag.
+	 * 
+	 * @param down the down flag
+	 */
 	public void setDown(boolean down) {
 		this.down = down;
 	}
 
+	/**
+	 * The election flag.
+	 */
 	private boolean election = false;
 
+	/**
+	 * Returns the election flag.
+	 * 
+	 * @return the election flag
+	 */
 	public boolean isElection() {
 		return election;
 	}
 
+	/**
+	 * The response timeout.
+	 */
+	private static final int responseTimeout = 500;
+	/**
+	 * The response received flag.
+	 */
+	boolean responseReceived;
+
+	/**
+	 * The message handler.
+	 */
+	private MessageHandlerImpl messageHandler = null;
+	/**
+	 * The coordination flag.
+	 */
 	private boolean coordination = false;
 
+	/**
+	 * Creates an {@code ElectionHandler} object with the specified ActiveMQ
+	 * connection factory.
+	 * 
+	 * @param cf the ActiveMQ connection factory
+	 * @throws JMSException if an error occurs during the execution
+	 */
 	public ElectionHandler(ActiveMQConnectionFactory cf) throws JMSException {
 		this.messageHandler = new MessageHandlerImpl(cf);
 		this.messageHandler.start();
 	}
 
+	/**
+	 * Set up and check if is possible to start the election process. If is possible
+	 * start the election process.
+	 */
 	public void election() {
 		this.election = true;
 		this.coordination = false;
@@ -78,10 +156,18 @@ public class ElectionHandler implements Handler, MessageListener {
 		ArrayList<Integer> list = new ArrayList<>();
 		list.add(this.pid);
 		Integer index = this.findIndexOfNextPid(this.pids, this.pid);
-		this.sendPidsList(list, index, RequestType.election);
+		this.sendPidsList(list, index);
 	}
 
-	private void sendPidsList(ArrayList<Integer> list, int index, RequestType rt) {
+	/**
+	 * Send the list of process IDs to the next node in the list. If the next node
+	 * doesn't respond, the list is propagated to the next of the next node. If the
+	 * next node is the current node, the election process is stopped.
+	 * 
+	 * @param list  the list of process IDs
+	 * @param index the index of the next node in the list
+	 */
+	private void sendPidsList(ArrayList<Integer> list, int index) {
 		if (this.down)
 			return;
 		if (!this.election)
@@ -93,9 +179,8 @@ public class ElectionHandler implements Handler, MessageListener {
 
 		try {
 			this.responseReceived = false;
-			this.messageHandler.send("election_" + p, list, rt);
+			this.messageHandler.send("election_" + p, list, RequestType.election);
 			this.waitForResponseOrTimeout();
-
 		} catch (JMSException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -106,12 +191,18 @@ public class ElectionHandler implements Handler, MessageListener {
 			this.responseReceived = false; // Reset flag
 		} else {
 			if (this.pids.size() - 1 == index)
-				this.sendPidsList(list, 0, rt);
+				this.sendPidsList(list, 0);
 			else
-				this.sendPidsList(list, index + 1, rt);
+				this.sendPidsList(list, index + 1);
 		}
 	}
 
+	/**
+	 * Set the master node and the process ID of the master node.
+	 * 
+	 * @param m         the master node flag
+	 * @param pidMaster the process ID of the master node
+	 */
 	public void setMaster(Boolean m, Integer pidMaster) {
 		if (down)
 			return;
@@ -128,22 +219,37 @@ public class ElectionHandler implements Handler, MessageListener {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 		String formattedTime = currentTime.format(formatter);
 
-		System.err.println("My pid: " + this.pid + " Set Master: " + pidMaster + " I am the master: " + this.master
+		System.out.println("My pid: " + this.pid + " Set Master: " + pidMaster + " I am the master: " + this.master
 				+ " " + formattedTime);
 	}
 
-	public synchronized void setResponse() {
+	/**
+	 * Set the response flag.
+	 */
+	private synchronized void setResponse() {
 		this.responseReceived = true;
 		notify();
 	}
 
-	public synchronized void waitForResponseOrTimeout() throws InterruptedException {
+	/**
+	 * Wait for the response or timeout.
+	 * 
+	 * @throws InterruptedException if an error occurs during the execution
+	 */
+	private synchronized void waitForResponseOrTimeout() throws InterruptedException {
 		if (!this.responseReceived) {
 			wait(responseTimeout);
 		}
 	}
 
-	public int findIndexOfNextPid(ArrayList<Integer> pids, int targetPid) {
+	/**
+	 * Find the index of the next process ID in the list.
+	 * 
+	 * @param pids      the list of process IDs
+	 * @param targetPid the target process ID
+	 * @return the index of the next process ID in the list
+	 */
+	private int findIndexOfNextPid(ArrayList<Integer> pids, int targetPid) {
 		for (int i = 0; i < pids.size(); i++) {
 			if (pids.get(i) == targetPid) {
 				if (pids.size() - 1 == i)
@@ -156,7 +262,6 @@ public class ElectionHandler implements Handler, MessageListener {
 		return -1;
 	}
 
-	@SuppressWarnings({ "unchecked", "incomplete-switch" })
 	@Override
 	public void onMessage(Message message) {
 		if (this.down)
@@ -167,12 +272,12 @@ public class ElectionHandler implements Handler, MessageListener {
 				Serializable rh = objectMessage.getObject();
 				RequestType rt = (RequestType) ((RequestHandler) rh).type;
 
-				switch (rt) {
-				case election:
+				if (rt == RequestType.election) {
 					// Response to election message
 					String resPid = "election_" + message.getJMSCorrelationID().split("@")[0];
 					this.messageHandler.send(resPid, this.pid, RequestType.ack);
 
+					@SuppressWarnings("unchecked")
 					ArrayList<Integer> list = (ArrayList<Integer>) ((RequestHandler) rh).obj;
 					int maxOfList = Collections.max(list);
 					int alreadyAdded = this.findIndexOfNextPid(list, this.pid);
@@ -189,7 +294,7 @@ public class ElectionHandler implements Handler, MessageListener {
 							if (this.pid == maxOfList)
 								master = true;
 							this.setMaster(master, maxOfList);
-							this.sendPidsList(list, index, RequestType.election);
+							this.sendPidsList(list, index);
 						}
 						return;
 					}
@@ -198,19 +303,20 @@ public class ElectionHandler implements Handler, MessageListener {
 					// propagate the list
 					this.election = true;
 					this.coordination = false;
-					this.setMaster(false, null);
 
 					list.add(this.pid);
-					this.sendPidsList(list, index, RequestType.election);
+					this.sendPidsList(list, index);
 
-					break;
-				case ack:
+					return;
+				}
+				if (rt == RequestType.ack) {
 					if (this.pidMaster != null) {
+						// If the pidMaster is not null, the node is already coordinated
 						this.election = false;
 						this.coordination = false;
 					}
 					this.setResponse();
-					break;
+					return;
 				}
 			}
 		} catch (JMSException e) {
@@ -227,6 +333,5 @@ public class ElectionHandler implements Handler, MessageListener {
 	@Override
 	public void close() throws JMSException {
 		this.messageHandler.close();
-
 	}
 }

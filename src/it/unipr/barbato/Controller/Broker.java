@@ -6,7 +6,7 @@ import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
 
 /**
- * The {@code Broker} class represents a message broker that handles the communication between producers and consumers.
+ * The {@code Broker} class represents a message broker that handles the communication between nodes of distributed system.
  * It creates and starts an ActiveMQ broker, establishes a connection, and starts the communication.
  * 
  * @author Vincenzo Barbato 345728
