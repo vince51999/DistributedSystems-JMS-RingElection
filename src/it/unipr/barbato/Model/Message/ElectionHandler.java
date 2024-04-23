@@ -110,8 +110,10 @@ public class ElectionHandler implements Handler, MessageListener {
 		return election;
 	}
 
+	/**
+	 * The wait response object.
+	 */
 	private WaitResponse waitResp = new WaitResponse(500);
-	
 
 	/**
 	 * The message handler.
@@ -209,7 +211,7 @@ public class ElectionHandler implements Handler, MessageListener {
 		if (tmp == this.pidMaster)
 			return;
 		String text = " I'm not the master";
-		if(this.master)
+		if (this.master)
 			text = " I am the master";
 		Print.print("MyPid: " + this.pid + " MasterPid: " + pidMaster + text, Print.cyan);
 	}
@@ -244,7 +246,8 @@ public class ElectionHandler implements Handler, MessageListener {
 				Serializable rh = objectMessage.getObject();
 				RequestType rt = (RequestType) ((RequestHandler) rh).type;
 
-				if (rt == RequestType.election) {
+				switch (rt) {
+				case election:
 					// Response to election message
 					String resPid = "election_" + message.getJMSCorrelationID().split("@")[0];
 					this.messageHandler.send(resPid, this.pid, RequestType.ack);
@@ -279,16 +282,17 @@ public class ElectionHandler implements Handler, MessageListener {
 					list.add(this.pid);
 					this.sendPidsList(list, index);
 
-					return;
-				}
-				if (rt == RequestType.ack) {
+					break;
+				case ack:
 					if (this.pidMaster != null) {
 						// If the pidMaster is not null, the node is already coordinated
 						this.election = false;
 						this.coordination = false;
 					}
 					waitResp.setResponse();
-					return;
+					break;
+				default:
+					break;
 				}
 			}
 		} catch (JMSException e) {

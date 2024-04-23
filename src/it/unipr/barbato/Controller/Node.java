@@ -115,7 +115,8 @@ public class Node {
 				rh.setPidMaster(eh.getPidMaster());
 				rh.setMaster(eh.getMaster());
 				rh.execute();
-
+				
+				Thread.sleep(100);
 				// If the node is up, it goes down with a certain probability
 				if (random.exec(downProb)) {
 					down = true;
@@ -124,7 +125,6 @@ public class Node {
 					Print.print("Nodes down", Print.red);
 					Thread.sleep(5000);
 				}
-
 				Thread.sleep(100);
 			}
 			Thread.sleep(500);
