@@ -12,6 +12,7 @@ import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.MessageListener;
 import jakarta.jms.ObjectMessage;
+import it.unipr.barbato.Model.Utilities.Print;
 
 /**
  * The {@code NodesHandler} class implements the {@link Handler} and
@@ -86,7 +87,7 @@ public class NodesHandler implements Handler, MessageListener {
 		this.messageHandler.subscribe("nodesList");
 
 		String processName = ManagementFactory.getRuntimeMXBean().getName();
-		System.out.println("Process Name: " + processName);
+		Print.print("Process Name: " + processName, Print.deft);
 		// Extract the process ID from the name
 		this.pid = Integer.parseInt(processName.split("@")[0]);
 		this.pids.add(pid);
@@ -96,7 +97,8 @@ public class NodesHandler implements Handler, MessageListener {
 	@Override
 	public void close() throws JMSException {
 		this.messageHandler.publish("nodesList", (Serializable) this.pid, RequestType.unsubscribe);
-		System.out.println("Nodes out from Group.");
+		System.out.println();
+		Print.print("Nodes out from Group.", Print.deft);
 	}
 
 	@SuppressWarnings("incomplete-switch")
@@ -111,10 +113,11 @@ public class NodesHandler implements Handler, MessageListener {
 				case subscribe:
 					Integer pid = (Integer) ((RequestHandler) rh).obj;
 					if (this.pids.contains(pid)) {
-						System.out.println("This pid is already added!");
+						Print.print("This pid is already added!", Print.deft);
 					} else {
 						this.pids.add(pid);
-						System.out.println("Pid List: " + this.pids);
+						System.out.println();
+						Print.print("Pid List: " + this.pids, Print.deft);
 						this.messageHandler.publish("nodesList", (Serializable) this.pids, RequestType.add_pid_to_list);
 					}
 					break;
@@ -123,19 +126,19 @@ public class NodesHandler implements Handler, MessageListener {
 					if (this.pids.contains(pid1)) {
 						this.pids.remove(pid1);
 						if (this.pids != null)
-							System.out.println("Pid List: " + this.pids);
-					} else {
-						System.out.println("This pid is already removed!");
-					}
+							Print.print("Pid List: " + this.pids, Print.deft);
+					} else
+						Print.print("This pid is already removed!", Print.deft);
+
 					break;
 				case add_pid_to_list:
 					@SuppressWarnings("unchecked")
 					ArrayList<Integer> pids = (ArrayList<Integer>) ((RequestHandler) rh).obj;
-					if (this.pids.size() >= pids.size()) {
-						System.out.println("My list is already updated: " + this.pids);
-					} else {
+					if (this.pids.size() >= pids.size())
+						Print.print("My list is already updated: " + this.pids, Print.deft);
+					else {
 						this.pids = new ArrayList<>(pids);
-						System.out.println("Update list: " + this.pids);
+						Print.print("Update list: " + this.pids, Print.deft);
 					}
 					break;
 				}

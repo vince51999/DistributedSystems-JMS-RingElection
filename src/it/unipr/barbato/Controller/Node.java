@@ -1,7 +1,5 @@
 package it.unipr.barbato.Controller;
 
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -10,6 +8,7 @@ import it.unipr.barbato.Model.Message.ElectionHandler;
 import it.unipr.barbato.Model.Message.NodesHandler;
 import it.unipr.barbato.Model.Message.ResourcesHandler;
 import it.unipr.barbato.Model.Utilities.RandomProb;
+import it.unipr.barbato.Model.Utilities.Print;
 
  /**
   * The {@code Node} class represents a node that interacts with other nodes in the
@@ -31,6 +30,7 @@ public class Node {
 	 * The probability of a node going active.
 	 */
 	private static final double activeProb = 0.8;
+	
 	/**
 	 * The broker URL.
 	 */
@@ -82,7 +82,7 @@ public class Node {
 
 			// If the node is the last node, the system goes down
 			if (pids.size() == 1) {
-				System.out.println("I am the last node! System goes down!");
+				Print.print("I am the last node! System goes down!", Print.deft);
 				nh.close();
 				rh.close();
 				eh.close();
@@ -101,18 +101,13 @@ public class Node {
 				eh.election();
 			}
 
-			// Formatting of current time to check the nodes coordination
-			LocalTime currentTime = LocalTime.now();
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-			String formattedTime = currentTime.format(formatter);
-
 			if (down) {
 				// If the node is down, it goes up with a certain probability and starts the election process
 				if (random.exec(activeProb)) {
 					down = false;
 					eh.setDown(down);
 					rh.setDown(down);
-					System.out.println("Nodes up " + formattedTime);
+					Print.print("Nodes up", Print.green);
 					eh.election();
 				}
 			} else {
@@ -126,7 +121,7 @@ public class Node {
 					down = true;
 					eh.setDown(down);
 					rh.setDown(down);
-					System.out.println("Nodes down " + formattedTime);
+					Print.print("Nodes down", Print.red);
 					Thread.sleep(5000);
 				}
 

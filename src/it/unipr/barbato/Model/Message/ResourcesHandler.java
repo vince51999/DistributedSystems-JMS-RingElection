@@ -1,12 +1,11 @@
 package it.unipr.barbato.Model.Message;
 
 import java.io.Serializable;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import it.unipr.barbato.Interface.Message.Handler;
+import it.unipr.barbato.Model.Utilities.Print;
 import it.unipr.barbato.Model.Utilities.RandomProb;
 import it.unipr.barbato.Model.Utilities.WaitResponse;
 import jakarta.jms.JMSException;
@@ -96,7 +95,7 @@ public class ResourcesHandler implements Handler, MessageListener {
 			if (waitResp.isResponseReceived()) {
 				waitResp.setResponseReceived(false); // Reset flag
 			} else {
-				System.out.println("Timeout occurred. No response received. Start election.");
+				Print.print("Timeout occurred. No response received. Start election.", Print.red);
 				this.setMaster(null);
 				this.setPidMaster(null);
 				this.timeoutOccured = true;
@@ -136,15 +135,11 @@ public class ResourcesHandler implements Handler, MessageListener {
 					break;
 				case resourceAnswer:
 					waitResp.setResponse();
-					// Formatting of current time to check the nodes coordination
-					LocalTime currentTime = LocalTime.now();
-					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-					String formattedTime = currentTime.format(formatter);
 					Boolean response = (Boolean) ((RequestHandler) rh).obj;
-					System.out.println("Master " + this.pidMaster + " response: " + response + " " + formattedTime);
+					Print.print("Master " + this.pidMaster + " response: " + response, Print.deft);
 					if (response) {
 						this.executedTaskCount++;
-						System.out.println("Executed task: " + this.executedTaskCount + "/" + ResourcesHandler.TASKS);
+						Print.print("Executed task: " + this.executedTaskCount + "/" + ResourcesHandler.TASKS, Print.deft);
 					} else {
 						Thread.sleep(100);
 					}

@@ -1,14 +1,13 @@
 package it.unipr.barbato.Model.Message;
 
 import java.io.Serializable;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import it.unipr.barbato.Interface.Message.Handler;
+import it.unipr.barbato.Model.Utilities.Print;
 import it.unipr.barbato.Model.Utilities.WaitResponse;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -208,16 +207,10 @@ public class ElectionHandler implements Handler, MessageListener {
 
 		if (tmp == this.pidMaster)
 			return;
-
-		// Formatting of current time to check the nodes coordination
-		LocalTime currentTime = LocalTime.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-		String formattedTime = currentTime.format(formatter);
-
-		System.out.println("My pid: " + this.pid + " Set Master: " + pidMaster + " I am the master: " + this.master
-				+ " " + formattedTime);
-
-
+		String text = " I'm not the master";
+		if(this.master)
+			text = " I am the master";
+		Print.print("MyPid: " + this.pid + " MasterPid: " + pidMaster + text, Print.cyan);
 	}
 
 	/**
