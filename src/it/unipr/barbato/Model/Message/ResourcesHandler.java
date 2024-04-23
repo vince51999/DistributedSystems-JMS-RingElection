@@ -3,11 +3,11 @@ package it.unipr.barbato.Model.Message;
 import java.io.Serializable;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Random;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import it.unipr.barbato.Interface.Message.Handler;
+import it.unipr.barbato.Model.Utilities.RandomProb;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.MessageListener;
@@ -47,7 +47,8 @@ public class ResourcesHandler implements Handler, MessageListener {
 	public void setDown(Boolean down) {
 		this.down = down;
 	}
-
+	
+	private RandomProb random;
 	/**
 	 * The message handler.
 	 */
@@ -75,6 +76,7 @@ public class ResourcesHandler implements Handler, MessageListener {
 
 	@Override
 	public void start() throws JMSException {
+		this.random = new RandomProb(this.pid.longValue());
 		this.messageHandler.setOnReceive(this);
 		this.messageHandler.receive("resource_" + this.pid);
 	}
@@ -138,7 +140,7 @@ public class ResourcesHandler implements Handler, MessageListener {
 					if (this.master) {
 						Integer pid = (Integer) ((RequestHandler) rh).obj;
 						String resPid = "resource_" + pid;
-						Boolean response = returnTrueWithProbability(ResourcesHandler.getResourceProb);
+						Boolean response = this.random.exec(ResourcesHandler.getResourceProb);
 						this.messageHandler.send(resPid, response, RequestType.resourceAnswer);
 					}
 					break;
@@ -165,19 +167,4 @@ public class ResourcesHandler implements Handler, MessageListener {
 			e.printStackTrace();
 		}
 	}
-
-	// Method to return true with a specified probability
-	public boolean returnTrueWithProbability(double probability) {
-		if (probability < 0 || probability > 1) {
-			throw new IllegalArgumentException("Probability must be between 0 and 1.");
-		}
-		Random random = new Random();
-		if (this.pid != null)
-			random.setSeed(this.pid);
-		// Generate a random double between 0 and 1
-		double randomValue = random.nextDouble();
-		// Return true if the random value is less than the specified probability
-		return randomValue < probability;
-	}
-
 }

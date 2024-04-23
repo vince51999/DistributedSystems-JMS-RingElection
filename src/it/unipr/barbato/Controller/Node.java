@@ -9,6 +9,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import it.unipr.barbato.Model.Message.ElectionHandler;
 import it.unipr.barbato.Model.Message.NodesHandler;
 import it.unipr.barbato.Model.Message.ResourcesHandler;
+import it.unipr.barbato.Model.Utilities.RandomProb;
 
  /**
   * The {@code Node} class represents a node that interacts with other nodes in the
@@ -52,6 +53,9 @@ public class Node {
 		while (nh.getSize() < NODES) {
 			Thread.sleep(1000);
 		}
+		
+		// Create random probability generator
+		RandomProb random = new RandomProb(nh.getPid().longValue());
 
 		// Create resource handler to request resources or give resources if this node is the master
 		ResourcesHandler rh = new ResourcesHandler(cf);
@@ -104,7 +108,7 @@ public class Node {
 
 			if (down) {
 				// If the node is down, it goes up with a certain probability and starts the election process
-				if (rh.returnTrueWithProbability(activeProb)) {
+				if (random.exec(activeProb)) {
 					down = false;
 					eh.setDown(down);
 					rh.setDown(down);
@@ -118,7 +122,7 @@ public class Node {
 				rh.execute();
 
 				// If the node is up, it goes down with a certain probability
-				if (rh.returnTrueWithProbability(downProb)) {
+				if (random.exec(downProb)) {
 					down = true;
 					eh.setDown(down);
 					rh.setDown(down);
