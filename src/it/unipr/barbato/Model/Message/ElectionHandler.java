@@ -9,6 +9,7 @@ import java.util.Collections;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import it.unipr.barbato.Interface.Message.Handler;
+import it.unipr.barbato.Model.Utilities.WaitResponse;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.MessageListener;
@@ -109,14 +110,8 @@ public class ElectionHandler implements Handler, MessageListener {
 		return election;
 	}
 
-	/**
-	 * The response timeout.
-	 */
-	private static final int responseTimeout = 500;
-	/**
-	 * The response received flag.
-	 */
-	boolean responseReceived;
+	private WaitResponse waitResp = new WaitResponse(500);
+	
 
 	/**
 	 * The message handler.
@@ -178,17 +173,17 @@ public class ElectionHandler implements Handler, MessageListener {
 			return;
 
 		try {
-			this.responseReceived = false;
+			waitResp.setResponseReceived(false);// Reset flag
 			this.messageHandler.send("election_" + p, list, RequestType.election);
-			this.waitForResponseOrTimeout();
+			waitResp.waitForResponseOrTimeout();
 		} catch (JMSException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		// Process the response
-		if (this.responseReceived) {
-			this.responseReceived = false; // Reset flag
+		if (waitResp.isResponseReceived()) {
+			waitResp.setResponseReceived(false); // Reset flag
 		} else {
 			if (this.pids.size() - 1 == index)
 				this.sendPidsList(list, 0);
@@ -221,25 +216,8 @@ public class ElectionHandler implements Handler, MessageListener {
 
 		System.out.println("My pid: " + this.pid + " Set Master: " + pidMaster + " I am the master: " + this.master
 				+ " " + formattedTime);
-	}
 
-	/**
-	 * Set the response flag.
-	 */
-	private synchronized void setResponse() {
-		this.responseReceived = true;
-		notify();
-	}
 
-	/**
-	 * Wait for the response or timeout.
-	 * 
-	 * @throws InterruptedException if an error occurs during the execution
-	 */
-	private synchronized void waitForResponseOrTimeout() throws InterruptedException {
-		if (!this.responseReceived) {
-			wait(responseTimeout);
-		}
 	}
 
 	/**
@@ -315,7 +293,7 @@ public class ElectionHandler implements Handler, MessageListener {
 						this.election = false;
 						this.coordination = false;
 					}
-					this.setResponse();
+					waitResp.setResponse();
 					return;
 				}
 			}

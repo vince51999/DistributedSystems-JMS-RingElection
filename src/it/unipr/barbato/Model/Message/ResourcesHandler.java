@@ -8,6 +8,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 
 import it.unipr.barbato.Interface.Message.Handler;
 import it.unipr.barbato.Model.Utilities.RandomProb;
+import it.unipr.barbato.Model.Utilities.WaitResponse;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.MessageListener;
@@ -49,6 +50,9 @@ public class ResourcesHandler implements Handler, MessageListener {
 	}
 	
 	private RandomProb random;
+	
+	private WaitResponse waitResp = new WaitResponse(500);
+	
 	/**
 	 * The message handler.
 	 */
@@ -58,9 +62,6 @@ public class ResourcesHandler implements Handler, MessageListener {
 	private static final int TASKS = 100;
 
 	private static final double getResourceProb = 0.7;
-
-	private static final int timeout = 7000;
-	private boolean responseReceived;
 
 	/**
 	 * Constructs a ResourcesHandler object with the specified MessageHandler.
@@ -89,11 +90,11 @@ public class ResourcesHandler implements Handler, MessageListener {
 		if (!this.master) {
 			this.messageHandler.send("resource_" + this.pidMaster, this.pid, RequestType.resourceRequest);
 			// Wait for the response or timeout
-			waitForResponseOrTimeout();
+			waitResp.waitForResponseOrTimeout();
 
 			// Process the response
-			if (this.responseReceived) {
-				this.responseReceived = false; // Reset flag
+			if (waitResp.isResponseReceived()) {
+				waitResp.setResponseReceived(false); // Reset flag
 			} else {
 				System.out.println("Timeout occurred. No response received. Start election.");
 				this.setMaster(null);
@@ -106,17 +107,6 @@ public class ResourcesHandler implements Handler, MessageListener {
 	@Override
 	public void close() throws JMSException {
 		this.messageHandler.close();
-	}
-
-	private synchronized void setResponse() {
-		this.responseReceived = true;
-		notify();
-	}
-
-	private synchronized void waitForResponseOrTimeout() throws InterruptedException {
-		if (!this.responseReceived) {
-			wait(timeout);
-		}
 	}
 
 	public boolean endExecution() {
@@ -145,7 +135,7 @@ public class ResourcesHandler implements Handler, MessageListener {
 					}
 					break;
 				case resourceAnswer:
-					this.setResponse();
+					waitResp.setResponse();
 					// Formatting of current time to check the nodes coordination
 					LocalTime currentTime = LocalTime.now();
 					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
