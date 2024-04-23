@@ -58,8 +58,9 @@ public class MessageHandlerImpl implements Handler, MessageHandler {
 	private ActiveMQConnection connection = null;
 
 	/**
-	 * Constructs a new MessageHandler.
-	 *
+	 * Constructs a new MessageHandlerImpl object with the specified ActiveMQ
+	 * 
+	 * @param cf the ActiveMQ connection factory
 	 * @throws JMSException if there is an error in creating or starting the JMS
 	 *                      connection.
 	 */

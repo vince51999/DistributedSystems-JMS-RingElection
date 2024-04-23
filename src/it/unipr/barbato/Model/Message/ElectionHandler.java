@@ -15,7 +15,8 @@ import jakarta.jms.MessageListener;
 import jakarta.jms.ObjectMessage;
 
 /**
- * The {@code ElectionHandler} class represents a handler for the election
+ * The {@code ElectionHandler} class implements the {@link Handler} and
+ * {@link MessageHandler} interfaces and represents a handler for the election
  * process in the distributed system. It sends and receives election messages,
  * waits for responses, and coordinates the nodes in the system. The master node
  * is elected based on Ring Algorithm.
