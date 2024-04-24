@@ -37,6 +37,7 @@ public class Node {
 	 * The probability of a node going active.
 	 */
 	private static final double activeProb = 0.7;
+
 	/**
 	 * The broker URL.
 	 */
@@ -59,7 +60,7 @@ public class Node {
 		while (nh.getSize() < NODES) {
 			Thread.sleep(1000);
 		}
-		
+
 		// Create random probability generator
 		RandomProb random = new RandomProb(nh.getPid().longValue());
 
