@@ -1,5 +1,7 @@
 package it.unipr.barbato.Controller;
 
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -23,6 +25,10 @@ public class Node {
 	 * The number of nodes in the system.
 	 */
 	private static final int NODES = 3;
+	/**
+	 * The time between 2 down
+	 */
+	private static final int timeBetween2Down = 10;
 	/**
 	 * The probability of a node going down.
 	 */
@@ -77,6 +83,8 @@ public class Node {
 
 		// Variable to check if the node is down
 		boolean down = false;
+		// Variable to manage the time to go down
+		LocalTime startTime = LocalTime.now();
 
 		// All node execute the following code until n-1 nodes are end m tasks
 		// executions
@@ -121,15 +129,16 @@ public class Node {
 				rh.setPidMaster(eh.getPidMaster());
 				rh.setMaster(eh.getMaster());
 				rh.execute();
-				
+
 				Thread.sleep(100);
-				// If the node is up, it goes down with a certain probability
-				if (random.exec(downProb)) {
+				// If the node is up, it goes down with a certain probability and if it's been a while since the last down
+				if (checkTimeForDown(startTime, timeBetween2Down) && random.exec(downProb)) {
 					down = true;
 					eh.setDown(down);
 					rh.setDown(down);
 					Print.print("Nodes down", Print.red);
 					Thread.sleep(5000);
+					startTime = LocalTime.now();
 				}
 				Thread.sleep(100);
 			}
@@ -139,5 +148,22 @@ public class Node {
 		rh.close();
 		eh.close();
 		System.exit(0);
+	}
+
+	/**
+	 * Check if the time to go down has passed
+	 * 
+	 * @param start The start time
+	 * @param timeBetween2Down The time between 2 down
+	 * @return True if the time to go down has passed, false otherwise
+	 */
+	public static boolean checkTimeForDown(LocalTime start, int timeBetween2Down) {
+		LocalTime currentTime = LocalTime.now();
+		Duration duration = Duration.between(start, currentTime);
+		Duration threshold = Duration.ofSeconds(timeBetween2Down);
+
+		if (duration.compareTo(threshold) > 0)
+			return true;
+		return false;
 	}
 }
