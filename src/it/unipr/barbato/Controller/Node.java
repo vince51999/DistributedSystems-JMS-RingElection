@@ -10,13 +10,14 @@ import it.unipr.barbato.Model.Message.ResourcesHandler;
 import it.unipr.barbato.Model.Utilities.RandomProb;
 import it.unipr.barbato.Model.Utilities.Print;
 
- /**
-  * The {@code Node} class represents a node that interacts with other nodes in the
-  * distributed system. It subscribes to the nodes list, requests resources, response 
-  * to resources requests if is the master, and participates in the election process.
-
-  * @author Vincenzo Barbato 345728
-  */
+/**
+ * The {@code Node} class represents a node that interacts with other nodes in
+ * the distributed system. It subscribes to the nodes list, requests resources,
+ * response to resources requests if is the master, and participates in the
+ * election process.
+ * 
+ * @author Vincenzo Barbato 345728
+ */
 public class Node {
 	/**
 	 * The number of nodes in the system.
@@ -57,12 +58,14 @@ public class Node {
 		// Create random probability generator
 		RandomProb random = new RandomProb(nh.getPid().longValue());
 
-		// Create resource handler to request resources or give resources if this node is the master
+		// Create resource handler to request resources or give resources if this node
+		// is the master
 		ResourcesHandler rh = new ResourcesHandler(cf);
 		rh.setPid(nh.getPid());
 		rh.start();
 
-		// Create election handler to manage the election process (Nodes use ring algorithm to elect a master node)
+		// Create election handler to manage the election process (Nodes use ring
+		// algorithm to elect a master node)
 		ElectionHandler eh = new ElectionHandler(cf);
 		eh.setPid(nh.getPid());
 		eh.setPids(nh.getPids());
@@ -75,7 +78,8 @@ public class Node {
 		// Variable to check if the node is down
 		boolean down = false;
 
-		// All node execute the following code until n-1 nodes are end m tasks executions
+		// All node execute the following code until n-1 nodes are end m tasks
+		// executions
 		while (rh.endExecution()) {
 			eh.setPids(nh.getPids());
 			ArrayList<Integer> list = new ArrayList<Integer>(nh.getPids());
@@ -102,7 +106,8 @@ public class Node {
 			}
 
 			if (down) {
-				// If the node is down, it goes up with a certain probability and starts the election process
+				// If the node is down, it goes up with a certain probability and starts the
+				// election process
 				if (random.exec(activeProb)) {
 					down = false;
 					eh.setDown(down);
@@ -111,7 +116,8 @@ public class Node {
 					eh.election();
 				}
 			} else {
-				// If the node is up, it requests resources or gives resources if it is the master
+				// If the node is up, it requests resources or gives resources if it is the
+				// master
 				rh.setPidMaster(eh.getPidMaster());
 				rh.setMaster(eh.getMaster());
 				rh.execute();
