@@ -32,12 +32,11 @@ public class Node {
 	/**
 	 * The probability of a node going down.
 	 */
-	private static final double downProb = 0.1;
+	private static final double downProb = 0.3;
 	/**
 	 * The probability of a node going active.
 	 */
-	private static final double activeProb = 0.8;
-	
+	private static final double activeProb = 0.7;
 	/**
 	 * The broker URL.
 	 */
