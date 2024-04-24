@@ -131,7 +131,8 @@ public class Node {
 				rh.execute();
 
 				Thread.sleep(100);
-				// If the node is up, it goes down with a certain probability and if it's been a while since the last down
+				// If the node is up, it goes down with a certain probability and if it's been a
+				// while since the last down
 				if (checkTimeForDown(startTime, timeBetween2Down) && random.exec(downProb)) {
 					down = true;
 					eh.setDown(down);
@@ -153,7 +154,7 @@ public class Node {
 	/**
 	 * Check if the time to go down has passed
 	 * 
-	 * @param start The start time
+	 * @param start            The start time
 	 * @param timeBetween2Down The time between 2 down
 	 * @return True if the time to go down has passed, false otherwise
 	 */
