@@ -11,6 +11,7 @@ import jakarta.jms.JMSException;
 public interface Handler {
 	/**
 	 * Starts the process.
+	 * Implement this method to setup and start the process or object.
 	 *
 	 * @throws JMSException if there is an error starting the process
 	 */
@@ -18,6 +19,7 @@ public interface Handler {
 
 	/**
 	 * Closes the process.
+	 * Implement this method to close the process or object.
 	 *
 	 * @throws JMSException if there is an error closing the process
 	 */
