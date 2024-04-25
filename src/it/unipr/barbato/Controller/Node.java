@@ -26,7 +26,7 @@ public class Node {
 	 */
 	private static final int NODES = 5;
 	/**
-	 * The minimum time between 2 down
+	 * The minimum time between 2 down (seconds)
 	 */
 	private static final int timeBetween2Down = 10;
 	/**
