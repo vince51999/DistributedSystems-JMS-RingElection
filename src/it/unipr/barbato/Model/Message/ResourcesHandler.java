@@ -43,6 +43,8 @@ public class ResourcesHandler implements Handler, MessageListener {
 
 	/**
 	 * Sets the process ID of the master node.
+	 * 
+	 * @param pidMaster the process ID of the master node
 	 */
 	public void setPidMaster(Integer pidMaster) {
 		this.pidMaster = pidMaster;
@@ -79,9 +81,9 @@ public class ResourcesHandler implements Handler, MessageListener {
 	private Boolean master = null;
 
 	/**
-	 * Returns the master node flag.
+	 * Sets the master node flag.
 	 * 
-	 * @return the master node flag
+	 * @param master the master node flag
 	 */
 	public void setMaster(Boolean master) {
 		this.master = master;
@@ -130,7 +132,7 @@ public class ResourcesHandler implements Handler, MessageListener {
 	 * Constructs a {@code ResourcesHandler} object with the specified ActiveMQ
 	 * connection
 	 *
-	 * @param ActiveMQConnectionFactory the ActiveMQ connection factory
+	 * @param cf the ActiveMQ connection factory
 	 * @throws JMSException if there is an error with the JMS connection
 	 */
 	public ResourcesHandler(ActiveMQConnectionFactory cf) throws JMSException {
