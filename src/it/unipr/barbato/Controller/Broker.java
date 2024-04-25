@@ -22,7 +22,7 @@ public class Broker {
 	private static final String BROKER_PROPS = "persistent=false&useJmx=false";
 
 	/**
-	 * The main method of the Broker class.
+	 * Runnable method to run broker.
 	 * It creates and starts an ActiveMQ broker, establishes a connection, and starts the communication.
 	 *
 	 * @param args the command-line arguments

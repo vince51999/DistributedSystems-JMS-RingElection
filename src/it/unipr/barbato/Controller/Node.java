@@ -24,9 +24,9 @@ public class Node {
 	/**
 	 * The number of nodes in the system.
 	 */
-	private static final int NODES = 3;
+	private static final int NODES = 5;
 	/**
-	 * The time between 2 down
+	 * The minimum time between 2 down
 	 */
 	private static final int timeBetween2Down = 10;
 	/**
@@ -86,8 +86,8 @@ public class Node {
 		// Variable to manage the time to go down
 		LocalTime startTime = LocalTime.now();
 
-		// All node execute the following code until n-1 nodes are end m tasks
-		// executions
+		// All node execute the following code until n-1 nodes are end (the system goes down with only one node)
+		// If a node has executed m tasks end execution
 		while (rh.endExecution()) {
 			eh.setPids(nh.getPids());
 			ArrayList<Integer> list = new ArrayList<Integer>(nh.getPids());
@@ -95,9 +95,9 @@ public class Node {
 			// If the node is the last node, the system goes down
 			if (pids.size() == 1) {
 				Print.print("I am the last node! System goes down!", Print.deft);
-				nh.close();
-				rh.close();
 				eh.close();
+				rh.close();
+				nh.close();
 				System.exit(0);
 			}
 
@@ -138,16 +138,19 @@ public class Node {
 					eh.setDown(down);
 					rh.setDown(down);
 					Print.print("Nodes down", Print.red);
+					// Down time
 					Thread.sleep(5000);
+					// Reset time between 2 down, if the difference between start and now is less
+					// the timeBetween2Down is not possible set down the node
 					startTime = LocalTime.now();
 				}
 				Thread.sleep(100);
 			}
 			Thread.sleep(500);
 		}
-		nh.close();
-		rh.close();
 		eh.close();
+		rh.close();
+		nh.close();
 		System.exit(0);
 	}
 
