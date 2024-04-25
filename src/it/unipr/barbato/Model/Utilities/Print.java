@@ -4,13 +4,13 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * The {@code Print} class provides methods to print messages with different colors
- * in the console.
+ * The {@code Print} class provides methods to print messages with different
+ * colors in the console.
  * 
  * @author Vincenzo Barbato 345728
  */
 public class Print {
-	
+
 	/**
 	 * The default color.
 	 */
@@ -35,7 +35,7 @@ public class Print {
 	/**
 	 * Prints a message with the specified color.
 	 * 
-	 * @param text the message to print
+	 * @param text  the message to print
 	 * @param color the color of the message
 	 */
 	public static void print(String text, String color) {

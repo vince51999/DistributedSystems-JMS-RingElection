@@ -1,22 +1,23 @@
 package it.unipr.barbato.Model.Utilities;
 
 /**
- * The {@code WaitResponse} class represents a wait response object.
- * It is used to wait for a response or a timeout.
+ * The {@code WaitResponse} class represents a wait response object. It is used
+ * to wait for a response or a timeout.
  * 
  * @author Vincenzo Barbato 345728
  */
 public class WaitResponse {
 	/**
-	 * The timeout value.
+	 * The timeout value (milliseconds).
 	 */
-	private  int timeout;
+	private int timeout;
 
 	/**
-	 * The response received flag.
+	 * The response received flag. If is true the response received, if is false the
+	 * response not received.
 	 */
 	private boolean responseReceived;
-	
+
 	/**
 	 * Returns the timeout value.
 	 * 
@@ -25,6 +26,7 @@ public class WaitResponse {
 	public boolean isResponseReceived() {
 		return responseReceived;
 	}
+
 	/**
 	 * Set the response received flag.
 	 * 
@@ -35,14 +37,14 @@ public class WaitResponse {
 	}
 
 	/**
-	 * Constructs a new wait response with the specified timeout.
+	 * Constructs a new {@code WaitResponse} object with the specified timeout.
 	 * 
 	 * @param timeout the timeout value
 	 */
 	public WaitResponse(int timeout) {
 		this.timeout = timeout;
 	}
-	
+
 	/**
 	 * Set the response flag.
 	 */
