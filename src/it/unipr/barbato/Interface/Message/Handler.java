@@ -4,7 +4,7 @@ package it.unipr.barbato.Interface.Message;
 import jakarta.jms.JMSException;
 
 /**
- * The {@code Handler} interface represents a message handler that can start and close a process.
+ * The {@code Handler} interface represents a handler that can start and close a process or object.
  * 
  * @author Vincenzo Barbato 345728
  */
