@@ -28,7 +28,7 @@ public class Node {
 	/**
 	 * The minimum time between 2 down (seconds)
 	 */
-	private static final int timeBetween2Down = 10;
+	private static final int timeBetween2Down = 50;
 	/**
 	 * The probability of a node going down.
 	 */
