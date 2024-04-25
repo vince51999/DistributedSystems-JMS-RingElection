@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"it.unipr.barbato.Controller"},{"l":"it.unipr.barbato.Interface.Message"},{"l":"it.unipr.barbato.Model.Message"},{"l":"it.unipr.barbato.Model.Utilities"}];updateSearchResults();
