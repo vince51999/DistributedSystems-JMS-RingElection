@@ -112,6 +112,9 @@ public class Node {
 				rh.setTimeoutOccured(false);
 				eh.election();
 			}
+			
+			rh.setPidMaster(eh.getPidMaster());
+			rh.setMaster(eh.getMaster());
 
 			if (down) {
 				// If the node is down, it goes up with a certain probability and starts the
