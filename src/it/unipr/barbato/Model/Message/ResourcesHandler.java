@@ -26,6 +26,7 @@ public class ResourcesHandler implements Handler, MessageListener {
 	 * The process ID of the node.
 	 */
 	private Integer pid = null;
+
 	/**
 	 * Sets the process ID of the node.
 	 * 
@@ -34,20 +35,25 @@ public class ResourcesHandler implements Handler, MessageListener {
 	public void setPid(Integer pid) {
 		this.pid = pid;
 	}
+
 	/**
 	 * The process ID of the master node.
 	 */
 	private Integer pidMaster = null;
+
 	/**
 	 * Sets the process ID of the master node.
 	 */
 	public void setPidMaster(Integer pidMaster) {
 		this.pidMaster = pidMaster;
 	}
+
 	/**
-	 * The timeout flag.
+	 * The timeout flag. If is true the timeout occurred, if is false the timeout
+	 * not occurred.
 	 */
 	private boolean timeoutOccured = false;
+
 	/**
 	 * Returns the timeout flag.
 	 * 
@@ -56,6 +62,7 @@ public class ResourcesHandler implements Handler, MessageListener {
 	public boolean isTimeoutOccured() {
 		return timeoutOccured;
 	}
+
 	/**
 	 * Sets the timeout flag.
 	 * 
@@ -64,11 +71,13 @@ public class ResourcesHandler implements Handler, MessageListener {
 	public void setTimeoutOccured(boolean timeoutOccured) {
 		this.timeoutOccured = timeoutOccured;
 	}
+
 	/**
-	 * The master node flag.
-	 * If is true the node is the master node, if is false the node is not the master node.
+	 * The master node flag. If is true the node is the master node, if is false the
+	 * node is not the master node.
 	 */
 	private Boolean master = null;
+
 	/**
 	 * Returns the master node flag.
 	 * 
@@ -77,11 +86,12 @@ public class ResourcesHandler implements Handler, MessageListener {
 	public void setMaster(Boolean master) {
 		this.master = master;
 	}
+
 	/**
-	 * Down flag.
-	 * If is true the node is down, if is false the node is up.
+	 * Down flag. If is true the node is down, if is false the node is up.
 	 */
 	private Boolean down = false;
+
 	/**
 	 * Sets the down flag.
 	 * 
@@ -90,6 +100,7 @@ public class ResourcesHandler implements Handler, MessageListener {
 	public void setDown(Boolean down) {
 		this.down = down;
 	}
+
 	/**
 	 * The random probability generator.
 	 */
@@ -98,7 +109,6 @@ public class ResourcesHandler implements Handler, MessageListener {
 	 * The wait response object.
 	 */
 	private WaitResponse waitResp = new WaitResponse(500);
-	
 	/**
 	 * The message handler.
 	 */
@@ -111,13 +121,14 @@ public class ResourcesHandler implements Handler, MessageListener {
 	 * The number of tasks to execute.
 	 */
 	private static final int TASKS = 100;
- 	/**
+	/**
 	 * The probability of the master node to give resource.
 	 */
 	private static final double getResourceProb = 0.7;
 
 	/**
-	 * Constructs a {@code ResourcesHandler} object with the specified ActiveMQ connection
+	 * Constructs a {@code ResourcesHandler} object with the specified ActiveMQ
+	 * connection
 	 *
 	 * @param ActiveMQConnectionFactory the ActiveMQ connection factory
 	 * @throws JMSException if there is an error with the JMS connection
@@ -128,11 +139,11 @@ public class ResourcesHandler implements Handler, MessageListener {
 	}
 
 	/**
-	 * Executes the resources handler.
-	 * If the node is not down and is not the master node, sends a resource request to the master node.
+	 * Executes the resources handler. If the node is not down and is not the master
+	 * node, sends a resource request to the master node.
 	 * 
 	 * @throws InterruptedException if there is an error in the execution
-	 * @throws JMSException if there is an error in the JMS connection
+	 * @throws JMSException         if there is an error in the JMS connection
 	 */
 	public void execute() throws InterruptedException, JMSException {
 		if (this.down)
@@ -157,8 +168,8 @@ public class ResourcesHandler implements Handler, MessageListener {
 	}
 
 	/**
-	 * Returns the end execution flag.
-	 * Return True if the executed task count is less than the number of tasks to execute, False otherwise.
+	 * Returns the end execution flag. Return True if the executed task count is
+	 * less than the number of tasks to execute, False otherwise.
 	 * 
 	 * @return the end execution flag
 	 */
@@ -204,12 +215,13 @@ public class ResourcesHandler implements Handler, MessageListener {
 					Print.print("Master " + this.pidMaster + " response: " + response, Print.deft);
 					if (response) {
 						this.executedTaskCount++;
-						Print.print("Executed task: " + this.executedTaskCount + "/" + ResourcesHandler.TASKS, Print.deft);
+						Print.print("Executed task: " + this.executedTaskCount + "/" + ResourcesHandler.TASKS,
+								Print.deft);
 					} else {
 						Thread.sleep(100);
 					}
 					break;
-				default: 
+				default:
 					break;
 				}
 			}

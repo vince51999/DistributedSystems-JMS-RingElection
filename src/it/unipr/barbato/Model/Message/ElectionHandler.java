@@ -40,7 +40,7 @@ public class ElectionHandler implements Handler, MessageListener {
 	}
 
 	/**
-	 * The master node flag.
+	 * The master node flag. If the node is the master, the flag is set to true.
 	 */
 	private Boolean master = null;
 
@@ -83,7 +83,7 @@ public class ElectionHandler implements Handler, MessageListener {
 	}
 
 	/**
-	 * The down flag.
+	 * The down flag. If the node is down, the flag is set to true.
 	 */
 	private boolean down = false;
 
@@ -97,18 +97,10 @@ public class ElectionHandler implements Handler, MessageListener {
 	}
 
 	/**
-	 * The election flag.
+	 * The election flag. If the election process is started, the flag is set to
+	 * true.
 	 */
 	private boolean election = false;
-
-	/**
-	 * Returns the election flag.
-	 * 
-	 * @return the election flag
-	 */
-	public boolean isElection() {
-		return election;
-	}
 
 	/**
 	 * The wait response object.
@@ -120,7 +112,8 @@ public class ElectionHandler implements Handler, MessageListener {
 	 */
 	private MessageHandlerImpl messageHandler = null;
 	/**
-	 * The coordination flag.
+	 * The coordination flag. If the coordination process is started, the flag is
+	 * set to true.
 	 */
 	private boolean coordination = false;
 
@@ -169,28 +162,31 @@ public class ElectionHandler implements Handler, MessageListener {
 			return;
 		if (!this.election)
 			return;
-
-		int p = this.pids.get(index);
-		if (p == this.pid)
-			return;
-
 		try {
-			waitResp.setResponseReceived(false);// Reset flag
-			this.messageHandler.send("election_" + p, list, RequestType.election);
-			waitResp.waitForResponseOrTimeout();
-		} catch (JMSException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		// Process the response
-		if (waitResp.isResponseReceived()) {
-			waitResp.setResponseReceived(false); // Reset flag
-		} else {
-			if (this.pids.size() - 1 == index)
-				this.sendPidsList(list, 0);
-			else
-				this.sendPidsList(list, index + 1);
+			int p = this.pids.get(index);
+			if (p == this.pid)
+				return;
+
+			try {
+				waitResp.setResponseReceived(false);// Reset flag
+				this.messageHandler.send("election_" + p, list, RequestType.election);
+				waitResp.waitForResponseOrTimeout();
+			} catch (JMSException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// Process the response
+			if (waitResp.isResponseReceived()) {
+				waitResp.setResponseReceived(false); // Reset flag
+			} else {
+				if (this.pids.size() - 1 == index)
+					this.sendPidsList(list, 0);
+				else
+					this.sendPidsList(list, index + 1);
+			}
+		} catch (IndexOutOfBoundsException e) {
+			return;
 		}
 	}
 

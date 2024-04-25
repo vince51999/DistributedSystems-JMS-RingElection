@@ -17,8 +17,8 @@ import it.unipr.barbato.Model.Utilities.Print;
 /**
  * The {@code NodesHandler} class implements the {@link Handler} and
  * {@link MessageListener} interfaces and represents a nodes handler in the
- * distributed system. It take updated all nodes on the system status 
- * (the number of nodes and the process IDs of all node in the distributed system).
+ * distributed system. It take updated all nodes on the system status (the
+ * number of nodes and the process IDs of all node in the distributed system).
  * 
  * @author Vincenzo Barbato 345728
  */
@@ -27,6 +27,7 @@ public class NodesHandler implements Handler, MessageListener {
 	 * The process ID of the node.
 	 */
 	private Integer pid = null;
+
 	/**
 	 * Returns the process ID of the node.
 	 * 
@@ -35,10 +36,12 @@ public class NodesHandler implements Handler, MessageListener {
 	public Integer getPid() {
 		return this.pid;
 	}
+
 	/**
 	 * The list of process IDs of the nodes.
 	 */
 	public ArrayList<Integer> pids = new ArrayList<>();
+
 	/**
 	 * Returns the list of process IDs of the nodes.
 	 * 
@@ -47,14 +50,15 @@ public class NodesHandler implements Handler, MessageListener {
 	public ArrayList<Integer> getPids() {
 		return this.pids;
 	}
+
 	/**
 	 * The message handler.
 	 */
 	private MessageHandlerImpl messageHandler = null;
 
 	/**
-	 * Creates an {@code NodesHandler} object with the specified ActiveMQ
-	 * connection factory.
+	 * Creates an {@code NodesHandler} object with the specified ActiveMQ connection
+	 * factory.
 	 * 
 	 * @param cf the ActiveMQ connection factory
 	 * @throws JMSException if an error occurs during the execution
@@ -80,14 +84,14 @@ public class NodesHandler implements Handler, MessageListener {
 	 */
 	public Integer getMax() {
 		// If the list is empty, return Long.MIN_VALUE or throw an exception
-		if (this.pids.isEmpty()) 
+		if (this.pids.isEmpty())
 			throw new IllegalArgumentException("List is empty");
-		
+
 		// Initialize max to the first element of the list
 		int max = this.pids.get(0);
 
 		for (int i = 1; i < this.pids.size(); i++) {
-			if (this.pids.get(i) > max) 
+			if (this.pids.get(i) > max)
 				max = this.pids.get(i);
 		}
 		return max;
@@ -109,8 +113,12 @@ public class NodesHandler implements Handler, MessageListener {
 	@Override
 	public void close() throws JMSException {
 		this.messageHandler.publish("nodesList", (Serializable) this.pid, RequestType.unsubscribe);
-		System.out.println();
-		Print.print("Nodes out from Group.", Print.deft);
+		try {
+			Thread.sleep(500);
+			Print.print("Nodes out from Group.", Print.deft);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

@@ -6,8 +6,9 @@ import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
 
 /**
- * The {@code Broker} class represents a message broker that handles the communication between nodes of distributed system.
- * It creates and starts an ActiveMQ broker, establishes a connection, and starts the communication.
+ * The {@code Broker} class represents a message broker that handles the
+ * communication between nodes of distributed system. It creates and starts an
+ * ActiveMQ broker, establishes a connection, and starts the communication.
  * 
  * @author Vincenzo Barbato 345728
  */
@@ -22,8 +23,8 @@ public class Broker {
 	private static final String BROKER_PROPS = "persistent=false&useJmx=false";
 
 	/**
-	 * Runnable method to run broker.
-	 * It creates and starts an ActiveMQ broker, establishes a connection, and starts the communication.
+	 * Runnable method to run broker. It creates and starts an ActiveMQ broker,
+	 * establishes a connection, and starts the communication.
 	 *
 	 * @param args the command-line arguments
 	 * @throws Exception if an error occurs during the execution
