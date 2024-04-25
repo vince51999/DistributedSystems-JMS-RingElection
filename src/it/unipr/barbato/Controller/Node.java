@@ -86,7 +86,8 @@ public class Node {
 		// Variable to manage the time to go down
 		LocalTime startTime = LocalTime.now();
 
-		// All node execute the following code until n-1 nodes are end (the system goes down with only one node)
+		// All node execute the following code until n-1 nodes are end (the system goes
+		// down with only one node)
 		// If a node has executed m tasks end execution
 		while (rh.endExecution()) {
 			eh.setPids(nh.getPids());
@@ -112,7 +113,7 @@ public class Node {
 				rh.setTimeoutOccured(false);
 				eh.election();
 			}
-			
+
 			rh.setPidMaster(eh.getPidMaster());
 			rh.setMaster(eh.getMaster());
 
