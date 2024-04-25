@@ -25,6 +25,7 @@ public interface MessageHandler {
 	 *
 	 * @param topic_name the name of the topic to publish the message to.
 	 * @param obj        the Serializable object to be published.
+	 * @param type       the type of the request.
 	 * @throws JMSException if there is an error while publishing the message.
 	 */
 	public void publish(String topic_name, Serializable obj, RequestType type) throws JMSException;
