@@ -124,7 +124,7 @@ public class Node {
 					down = false;
 					eh.setDown(down);
 					rh.setDown(down);
-					Print.print("Nodes up", Print.green);
+					Print.print("Nodes up", Print.cyan);
 					eh.election();
 				}
 			} else {

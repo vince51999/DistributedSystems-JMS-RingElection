@@ -20,10 +20,6 @@ public class Print {
 	 */
 	public static String red = "\u001B[31m";
 	/**
-	 * The green color.
-	 */
-	public static String green = "\u001B[32m";
-	/**
 	 * The cyan color.
 	 */
 	public static String cyan = "\u001B[36m";

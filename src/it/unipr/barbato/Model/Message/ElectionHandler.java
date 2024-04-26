@@ -209,7 +209,7 @@ public class ElectionHandler implements Handler, MessageListener {
 		String text = " I'm not the master";
 		if (this.master)
 			text = " I am the master";
-		Print.print("MyPid: " + this.pid + " MasterPid: " + pidMaster + text, Print.cyan);
+		Print.print("MyPid: " + this.pid + " MasterPid: " + pidMaster + text, Print.deft);
 	}
 
 	/**
